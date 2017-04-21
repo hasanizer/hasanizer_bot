@@ -47,15 +47,15 @@ public class Main {
   }
   private static void renderDB(){
       HikariConfig config = new  HikariConfig();
-      config.setJdbcUrl(System.getenv("DATABASE_URL"));
+      //config.setDriverClassName("org.postgresql.Driver");
+      config.setJdbcUrl(System.getenv("DATABASE_URL") );
       final HikariDataSource dataSource = (config.getJdbcUrl() != null) ?
               new HikariDataSource(config) : new HikariDataSource();
-
       get("/db", (req, res) -> {
           Map<String, Object> attributes = new HashMap<>();
           try(Connection connection = dataSource.getConnection()) {
               Statement stmt = connection.createStatement();
-              ResultSet rs = stmt.executeQuery("SELECT id, full_name, username, photo, smile_at FROM karyawan");
+              ResultSet rs = stmt.executeQuery("SELECT id, full_name, username, photo, smile_at FROM employee");
 
               ArrayList<String> output = new ArrayList<String>();
               while (rs.next()) {
