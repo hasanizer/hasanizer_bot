@@ -48,7 +48,7 @@ public class Main {
   private static void renderDB(){
       HikariConfig config = new  HikariConfig();
       //config.setDriverClassName("org.postgresql.Driver");
-      config.setJdbcUrl(System.getenv("DATABASE_URL") );
+      config.setJdbcUrl(System.getenv("JDBC_DB_URL") );
       final HikariDataSource dataSource = (config.getJdbcUrl() != null) ?
               new HikariDataSource(config) : new HikariDataSource();
       get("/db", (req, res) -> {
