@@ -33,7 +33,7 @@ public class PostgreDB {
     }
 
     public static PostgreDB getInstance() {
-        if (instance == null) {
+        if (instance == null || instance.config==null || instance.dataSource==null) {
             instance = new PostgreDB();
         }
         return instance;
@@ -64,6 +64,7 @@ public class PostgreDB {
     }
     public  Employee getRandom(){
         if(employees.size()==0){
+            System.out.println("employees size 0");
             return new Employee();
         }
         return employees.get(new Random().nextInt(employees.size()-1));
