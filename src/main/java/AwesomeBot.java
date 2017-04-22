@@ -79,9 +79,9 @@ public class AwesomeBot extends TelegramLongPollingBot {
         } else if (command.equalsIgnoreCase("/stop")) {
             start = false;
             stillAsking = false;
-            sendMessage(id, "/start lagi kalau mau maen.");
+            sendMessage(id, "Permainan selesai. /start lagi kalau mau maen.");
         } else {
-            sendMessage(id, "Ok, fine \uD83D\uDE0A");
+            sendMessage(id, "Apa? \uD83D\uDE0A");
         }
     }
 
@@ -90,7 +90,7 @@ public class AwesomeBot extends TelegramLongPollingBot {
         Long id = message.getChatId();
         System.out.println("jawab: " + answer);
         if (employee.getFullName().toLowerCase().contains(answer.toLowerCase())) {
-            sendMessage(id, "Ya, betul betul betul.");
+            sendMessage(id, "Ya, betul betul betul. /lanjut?");
             stillAsking = false;
         } else {
             sendMessage(id, "Salah, tebak lagi ya. /nyerah? ");
