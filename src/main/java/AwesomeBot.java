@@ -1,5 +1,6 @@
 import com.google.common.io.BaseEncoding;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
+import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
@@ -15,6 +16,8 @@ import java.util.Base64;
 public class AwesomeBot extends TelegramLongPollingBot {
     private final String user = "aGFzYW5pemVy";
     private final String token = "MzQ4MjQwMjczOkFBR2JwYmszcThiRFNQdzVPWXI3VkJ5LWFIMjdpOUZ4eVFv";
+    private Employee employee;
+    private boolean stillAsking = false;
 
     @Override
     public String getBotUsername() {
@@ -42,14 +45,63 @@ public class AwesomeBot extends TelegramLongPollingBot {
     public void onUpdateReceived(Update update) {
         // We check if the update has a message and the message has text
         if (update.hasMessage() && update.getMessage().hasText()) {
-            SendMessage message = new SendMessage() // Create a SendMessage object with mandatory fields
-                    .setChatId(update.getMessage().getChatId())
-                    .setText(update.getMessage().getText());
-            try {
-                sendMessage(message); // Call method to send the message
-            } catch (TelegramApiException e) {
-                e.printStackTrace();
+            if (update.getMessage().getText().startsWith("/")) {
+                processCommand(update.getMessage());
+            } else {
+                processJawaban(update.getMessage());
             }
+        }
+    }
+
+    private void processCommand(Message message) {
+        String command = message.getText();
+        Long id = message.getChatId();
+        if (command.equalsIgnoreCase("/start")) {
+            sendMessage(id, "Silakan tebak nama setelah ketik perintah /lanjut. Have fun \uD83D\uDE0A");
+        } else if (command.equalsIgnoreCase("/lanjut")) {
+            if (stillAsking) {
+                sendMessage(id, "Tebak dulu nama yang barusan ya...");
+            } else {
+                stillAsking = true;
+                employee = PostgreDB.getInstance().getRandom();
+                sendMessage(id, employee.getPhoto());
+            }
+        } else if (command.equalsIgnoreCase("/nyerah")) {
+            sendMessage(id, "Nama doi itu " + employee.getFullName());
+            stillAsking = false;
+        }
+    }
+
+    private void processJawaban(Message message) {
+        String answer = message.getText();
+        Long id = message.getChatId();
+        if (answer.toLowerCase().contains(employee.getFullName().toLowerCase())) {
+            sendMessage(id, "Ya, betul betul betul.");
+            stillAsking = false;
+        } else {
+            sendMessage(id, "Salah, tebak lagi ya. /nyerah? ");
+        }
+    }
+
+    private void sendMessage(final Message message) {
+        SendMessage sendMessage = new SendMessage() // Create a SendMessage object with mandatory fields
+                .setChatId(message.getChatId())
+                .setText(message.getText());
+        try {
+            sendMessage(sendMessage); // Call method to send the message
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void sendMessage(Long id, String message) {
+        SendMessage sendMessage = new SendMessage() // Create a SendMessage object with mandatory fields
+                .setChatId(id)
+                .setText(message);
+        try {
+            sendMessage(sendMessage); // Call method to send the message
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
         }
     }
 }
