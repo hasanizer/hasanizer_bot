@@ -35,7 +35,7 @@ public class Main {
   }
   private static void testDrive(){
      render(System.getenv("JDBC_DB_URL"));
-     //renderDB();
+     renderDB();
   }
   private static void render(String output) {
       get("/", (request, response)-> {
