@@ -34,8 +34,13 @@ public class Main {
     }
   }
   private static void testDrive(){
+      init();
      render(System.getenv("JDBC_DB_URL"));
      renderDB();
+  }
+  private void init(){
+      port(Integer.valueOf(System.getenv("PORT")));
+      staticFileLocation("/public");
   }
   private static void render(String output) {
       get("/", (request, response)-> {
