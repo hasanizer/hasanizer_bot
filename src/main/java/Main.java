@@ -35,7 +35,7 @@ public class Main {
   }
   private static void testDrive(){
       init();
-     render(System.getenv("JDBC_DB_URL"));
+     render("helloworld");
      renderDB();
   }
   private static void init(){
