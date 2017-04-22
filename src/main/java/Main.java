@@ -38,7 +38,7 @@ public class Main {
      render(System.getenv("JDBC_DB_URL"));
      renderDB();
   }
-  private void init(){
+  private static void init(){
       port(Integer.valueOf(System.getenv("PORT")));
       staticFileLocation("/public");
   }
