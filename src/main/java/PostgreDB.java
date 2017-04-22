@@ -25,11 +25,8 @@ public class PostgreDB {
         config = new HikariConfig();
         //config.setDriverClassName("org.postgresql.Driver");
         config.setJdbcUrl(Config.JDBC_DB_URL);
-        dataSource = (config.getJdbcUrl() != null) ?
-                new HikariDataSource(config) : new HikariDataSource();
-
+        dataSource = (config.getJdbcUrl() != null) ? new HikariDataSource(config) : new HikariDataSource();
         employees = getAll();
-
     }
 
     public static PostgreDB getInstance() {
@@ -51,11 +48,14 @@ public class PostgreDB {
     private ArrayList<Employee> getAll() {
         ArrayList<Employee> output = new ArrayList<>();
         try (Connection connection = dataSource.getConnection()) {
+            System.out.println("connect");
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(queryAllEmployees);
             while (rs.next()) {
-                Employee employee = new Employee(rs.getInt("id"), rs.getString("full_name"), rs.getString("username"), rs.getString("photo"), rs.getString("smileAt"));
+                System.out.println("siap tampung..");
+                Employee employee = new Employee(rs.getInt("id"), rs.getString("full_name"), rs.getString("username"), rs.getString("photo"), rs.getString("smile_at"));
                 output.add(employee);
+                System.out.println("dapet 1 employee");
             }
             return output;
         } catch (Exception e) {

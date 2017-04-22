@@ -18,6 +18,7 @@ public class AwesomeBot extends TelegramLongPollingBot {
     private final String token = "MzQ4MjQwMjczOkFBR2JwYmszcThiRFNQdzVPWXI3VkJ5LWFIMjdpOUZ4eVFv";
     private Employee employee;
     private boolean stillAsking = false;
+    private boolean start = false;
 
     @Override
     public String getBotUsername() {
@@ -48,7 +49,11 @@ public class AwesomeBot extends TelegramLongPollingBot {
             if (update.getMessage().getText().startsWith("/")) {
                 processCommand(update.getMessage());
             } else {
-                processJawaban(update.getMessage());
+                if (start) {
+                    processJawaban(update.getMessage());
+                } else {
+                    sendMessage(update.getMessage().getChatId(), "Ok, fine \uD83D\uDE0A");
+                }
             }
         }
     }
@@ -56,9 +61,11 @@ public class AwesomeBot extends TelegramLongPollingBot {
     private void processCommand(Message message) {
         String command = message.getText();
         Long id = message.getChatId();
+        System.out.println("cmd: " + command);
         if (command.equalsIgnoreCase("/start")) {
-            sendMessage(id, "Silakan tebak nama setelah ketik perintah /lanjut. Have fun \uD83D\uDE0A");
-        } else if (command.equalsIgnoreCase("/lanjut")) {
+            start = true;
+            sendMessage(id, "Silakan tebak nama, setelah ketik perintah /lanjut. Have fun \uD83D\uDE0A");
+        } else if (command.equalsIgnoreCase("/lanjut") && start) {
             if (stillAsking) {
                 sendMessage(id, "Tebak dulu nama yang barusan ya...");
             } else {
@@ -66,16 +73,23 @@ public class AwesomeBot extends TelegramLongPollingBot {
                 employee = PostgreDB.getInstance().getRandom();
                 sendMessage(id, employee.getPhoto());
             }
-        } else if (command.equalsIgnoreCase("/nyerah")) {
+        } else if (command.equalsIgnoreCase("/nyerah") && start) {
             sendMessage(id, "Nama doi itu " + employee.getFullName());
             stillAsking = false;
+        } else if (command.equalsIgnoreCase("/stop")) {
+            start = false;
+            stillAsking = false;
+            sendMessage(id, "/start lagi kalau mau maen.");
+        } else {
+            sendMessage(id, "Ok, fine \uD83D\uDE0A");
         }
     }
 
     private void processJawaban(Message message) {
         String answer = message.getText();
         Long id = message.getChatId();
-        if (answer.toLowerCase().contains(employee.getFullName().toLowerCase())) {
+        System.out.println("jawab: " + answer);
+        if (employee.getFullName().toLowerCase().contains(answer.toLowerCase())) {
             sendMessage(id, "Ya, betul betul betul.");
             stillAsking = false;
         } else {

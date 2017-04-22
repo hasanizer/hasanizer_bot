@@ -40,6 +40,7 @@ public class Main {
     private static void init() {
         port(Integer.valueOf(System.getenv("PORT")));
         staticFileLocation("/public");
+        PostgreDB.getInstance();
     }
 
 
